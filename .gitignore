@@ -1,11 +1,7 @@
-# Environments
-.env
-
-# Django
-db.sqlite3
-__pycache__/
 *.pyc
-
-# IDE
+__pycache__/
+db.sqlite3
+.env
 .vscode/
-.idea/ 
+.idea/
+staticfiles/ 

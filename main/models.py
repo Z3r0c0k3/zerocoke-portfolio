@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 
 class Link(models.Model):
     """범용 링크 모델"""
-    url = models.URLField()
+    url = models.CharField(max_length=255)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
@@ -19,12 +19,12 @@ class Link(models.Model):
         return self.url
 
 class Profile(models.Model):
-    """개인 정보 모델"""
+    """프로필 모델"""
     name = models.CharField(max_length=100)
     title = models.CharField(max_length=200)
     description = models.TextField()
-    email = models.EmailField()
-    links = GenericRelation(Link)
+    
+    links = GenericRelation('Link', related_query_name='profile')
 
     def __str__(self):
         return self.name

@@ -13,14 +13,25 @@
             --background-color: #121212;
             --text-color: #e0e0e0;
             --card-bg-color: #1e1e1e;
+            --card-border-color: rgba(255, 255, 255, 0.1);
+            --badge-bg-color: #343a40;
+            --badge-text-color: #f8f9fa;
             --gradient-color-1: #00ff87;
             --gradient-color-2: #60efff;
+            --gradient-opacity: 0.2;
         }
 
         [data-bs-theme="light"] {
             --background-color: #f8f9fa;
             --text-color: #212529;
             --card-bg-color: #ffffff;
+            --card-border-color: rgba(0, 0, 0, 0.125);
+            --badge-bg-color: #e9ecef;
+            --badge-text-color: #212529;
+            /* More intense gradient for light theme */
+            --gradient-color-1: #00b09b;
+            --gradient-color-2: #96c93d;
+            --gradient-opacity: 1.0;
         }
 
         body {
@@ -38,7 +49,7 @@
             pointer-events: none;
             background: radial-gradient(circle at var(--x1, 25%) var(--y1, 25%), var(--gradient-color-1), transparent 25%),
                         radial-gradient(circle at var(--x2, 75%) var(--y2, 75%), var(--gradient-color-2), transparent 25%);
-            opacity: 0.2;
+            opacity: var(--gradient-opacity);
             filter: blur(10vmax);
             transition: opacity 0.3s ease;
             animation: move-gradients 20s infinite alternate;
@@ -47,16 +58,16 @@
         @keyframes move-gradients {
             0% { 
                 transform: rotate(0deg) scale(1); 
-                --x1: 25%; --y1: 25%;
-                --x2: 75%; --y2: 75%;
+                --x1: 33%; --y1: 33%;
+                --x2: 67%; --y2: 67%;
             }
             50% {
                 opacity: 0.3;
             }
             100% { 
                 transform: rotate(360deg) scale(1.2);
-                --x1: 75%; --y1: 75%;
-                --x2: 25%; --y2: 25%;
+                --x1: 67%; --y1: 67%;
+                --x2: 33%; --y2: 33%;
             }
         }
 
@@ -64,7 +75,7 @@
             position: relative;
             z-index: 1;
         }
-        
+
         .hero-section {
             height: 100vh;
             display: flex;
@@ -72,15 +83,30 @@
             justify-content: center;
         }
 
+        .hero-section h1 {
+            /* Fluid typography: min, preferred, max */
+            font-size: clamp(2rem, 8vw, 3.5rem); 
+        }
+
         .project-card {
             background-color: var(--card-bg-color);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--card-border-color);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .project-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .highlight-present {
+            color: var(--gradient-color-1);
+            font-weight: bold;
+        }
+
+        .skills-container .badge {
+            background-color: var(--badge-bg-color) !important;
+            color: var(--badge-text-color) !important;
         }
 
         .bottom-nav {
@@ -102,7 +128,7 @@
             display: flex;
             align-items: center;
         }
-        
+
         .nav-item a, .nav-item .theme-toggle {
             color: var(--text-color);
             font-size: 1.25rem;
@@ -124,6 +150,19 @@
             height: 20px;
             align-self: center;
         }
+
+        /* Responsive adjustments for mobile */
+        @media (max-width: 768px) {
+            .bottom-nav {
+                padding: 0.5rem 1rem;
+                gap: 0.5rem;
+            }
+
+            .nav-item a, .nav-item .theme-toggle {
+                font-size: 1.1rem;
+                padding: 0.4rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -132,7 +171,7 @@
         {% block content %}{% endblock %}
     </div>
 
-    <nav class="bottom-nav">
+     <nav class="bottom-nav">
         <div class="nav-item">
             <a href="#home" title="Home"><i class="fas fa-home"></i></a>
         </div>
@@ -151,9 +190,6 @@
         <div class="nav-separator"></div>
         
         {% if profile %}
-            <div class="nav-item">
-                <a href="mailto:{{ profile.email }}" title="Email"><i class="fas fa-envelope"></i></a>
-            </div>
             {% for link in profile.links.all %}
             <div class="nav-item">
                 <a href="{{ link.url }}" target="_blank" title="{{ link.url|get_link_name }}">
@@ -166,56 +202,42 @@
         <div class="nav-separator"></div>
         <div class="nav-item">
             <button class="theme-toggle" id="theme-toggle-btn" title="Toggle Theme">
+                <i class="fas fa-sun d-none"></i>
                 <i class="fas fa-moon"></i>
             </button>
         </div>
     </nav>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Theme toggler
-        const themeToggleBtn = document.getElementById('theme-toggle-btn');
-        const htmlEl = document.documentElement;
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggleBtn = document.getElementById('theme-toggle-btn');
+            const htmlEl = document.documentElement;
+            const sunIcon = themeToggleBtn.querySelector('.fa-sun');
+            const moonIcon = themeToggleBtn.querySelector('.fa-moon');
 
-        const themes = ['dark', 'light', 'system'];
-        let currentThemeIndex = 0;
-
-        function applyTheme(theme) {
-            if (theme === 'system') {
-                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                htmlEl.setAttribute('data-bs-theme', systemPrefersDark ? 'dark' : 'light');
-            } else {
+            const applyTheme = (theme) => {
                 htmlEl.setAttribute('data-bs-theme', theme);
+                if (theme === 'light') {
+                    sunIcon.classList.remove('d-none');
+                    moonIcon.classList.add('d-none');
+                } else {
+                    sunIcon.classList.add('d-none');
+                    moonIcon.classList.remove('d-none');
+                }
+            };
+
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                applyTheme(savedTheme);
             }
-            updateIcon(theme);
-        }
 
-        function updateIcon(theme) {
-            const icon = themeToggleBtn.querySelector('i');
-            if (theme === 'dark') {
-                icon.className = 'fas fa-moon';
-            } else if (theme === 'light') {
-                icon.className = 'fas fa-sun';
-            } else {
-                icon.className = 'fas fa-desktop';
-            }
-        }
-
-        themeToggleBtn.addEventListener('click', () => {
-            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-            const newTheme = themes[currentThemeIndex];
-            localStorage.setItem('theme', newTheme);
-            applyTheme(newTheme);
-        });
-
-        const savedTheme = localStorage.getItem('theme') || 'system';
-        currentThemeIndex = themes.indexOf(savedTheme);
-        applyTheme(savedTheme);
-
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-            if (localStorage.getItem('theme') === 'system') {
-                applyTheme('system');
-            }
+            themeToggleBtn.addEventListener('click', () => {
+                const currentTheme = htmlEl.getAttribute('data-bs-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                localStorage.setItem('theme', newTheme);
+                applyTheme(newTheme);
+            });
         });
     </script>
 </body>

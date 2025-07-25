@@ -1,5 +1,6 @@
 from django.conf import settings
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseNotFound
+from django.shortcuts import render
 
 class AdminIPRestrictionMiddleware:
     def __init__(self, get_response):
@@ -20,7 +21,7 @@ class AdminIPRestrictionMiddleware:
             
             # 허용된 IP 목록에 사용자의 IP가 없으면 접근 거부
             if ip not in self.allowed_ips:
-                return HttpResponseForbidden("Forbidden: You do not have permission to access this page.")
+                return render(request, 'main/404.html', status=404)
 
         response = self.get_response(request)
         return response 

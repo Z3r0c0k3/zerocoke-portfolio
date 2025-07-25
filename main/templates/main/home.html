@@ -8,14 +8,14 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                {% if profile %}
-                <h1 class="display-3 fw-bold mb-4">{{ profile.name }}</h1>
-                <h2 class="h3 mb-5 text-white-50">{{ profile.title }}</h2>
+            {% if profile %}
+                <h1 class="fw-bold mb-4">{{ profile.name }}</h1>
+                <h2 class="h3 mb-5 text-muted">{{ profile.title }}</h2>
                 <p class="lead">{{ profile.description }}</p>
-                {% else %}
+            {% else %}
                 <h1 class="display-3 fw-bold mb-4">프로필을 등록해주세요</h1>
                 <p class="lead mb-5">관리자 페이지에서 프로필 정보를 추가할 수 있습니다.</p>
-                {% endif %}
+            {% endif %}
             </div>
         </div>
     </div>
@@ -29,7 +29,7 @@
                 <h2 class="display-5 fw-bold mb-5">Skills</h2>
                 <div class="skills-container">
                     {% for skill in skills %}
-                        <span class="badge rounded-pill text-bg-light p-3 m-1 fs-6">{{ skill.name }}</span>
+                        <span class="badge rounded-pill p-3 m-1 fs-6">{{ skill.name }}</span>
                     {% empty %}
                         <p>등록된 기술이 없습니다.</p>
                     {% endfor %}
@@ -45,44 +45,74 @@
                 <h2 class="display-5 fw-bold mb-5">Education</h2>
             </div>
         </div>
-        <div class="row justify-content-center">
+
+        {% if ongoing_educations %}
+        <div class="row justify-content-center mb-4">
             <div class="col-lg-10">
+                <h4 class="mb-3 text-muted">진행 중</h4>
                 <ul class="list-group list-group-flush">
-                    {% for edu in education_history %}
+                    {% for edu in ongoing_educations %}
                     <li class="list-group-item bg-transparent border-secondary py-3">
                         <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1 h5">{{ edu.course_name }}</h5>
-                            <small>{{ edu.start_date|date:"Y.m" }} ~ {% if edu.end_date %}{{ edu.end_date|date:"Y.m" }}{% else %}현재{% endif %}</small>
+                            <small>{{ edu.start_date|date:"Y.m" }} ~ <span class="highlight-present">현재</span></small>
                         </div>
-                        <p class="mb-1 text-white-50">{{ edu.institution }}</p>
-                    </li>
-                    {% empty %}
-                    <li class="list-group-item bg-transparent text-center">
-                        <p>등록된 교육 사항이 없습니다.</p>
+                        <p class="mb-1 text-muted">{{ edu.institution }}</p>
                     </li>
                     {% endfor %}
                 </ul>
             </div>
         </div>
+        {% endif %}
+
+        {% if completed_educations %}
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                {% if ongoing_educations %}<h4 class="mb-3 text-muted">완료</h4>{% endif %}
+                <ul class="list-group list-group-flush">
+                    {% for edu in completed_educations %}
+                    <li class="list-group-item bg-transparent border-secondary py-3">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1 h5">{{ edu.course_name }}</h5>
+                            <small>{{ edu.start_date|date:"Y.m" }} ~ {{ edu.end_date|date:"Y.m" }}</small>
+                        </div>
+                        <p class="mb-1 text-muted">{{ edu.institution }}</p>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if not ongoing_educations and not completed_educations %}
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center">
+                 <p>등록된 교육 사항이 없습니다.</p>
+            </div>
+        </div>
+        {% endif %}
     </section>
 
     <!-- Projects Section -->
     <section id="projects">
-        <div class="row">
-            <div class="col-lg-8 mx-auto text-center">
-                <h2 class="display-5 fw-bold mb-5">Projects</h2>
-            </div>
-        </div>
-        <div class="row">
-            {% for project in projects %}
+         <div class="row">
+             <div class="col-lg-8 mx-auto text-center">
+                 <h2 class="display-5 fw-bold mb-5">Projects</h2>
+             </div>
+         </div>
+
+        {% if ongoing_projects %}
+        <div class="row mb-5">
+            <div class="col-lg-12"><h4 class="mb-4 text-muted">진행 중</h4></div>
+            {% for project in ongoing_projects %}
             <div class="col-lg-6 mb-4">
                 <div class="card project-card h-100 p-3">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title h4">{{ project.title }}</h5>
-                        <p class="card-text text-white-50 mb-2">
-                            {{ project.start_date|date:"Y.m" }} ~ {% if project.end_date %}{{ project.end_date|date:"Y.m" }}{% else %}현재{% endif %}
+                        <p class="card-text text-muted mb-2">
+                            {{ project.start_date|date:"Y.m" }} ~ <span class="highlight-present">현재</span>
                         </p>
-                        <p class="card-text text-white-50">{{ project.description }}</p>
+                        <p class="card-text text-muted">{{ project.description }}</p>
                         <div class="my-3">
                             {% for skill in project.skills.all %}
                                 <span class="badge rounded-pill text-bg-secondary me-1">{{ skill.name }}</span>
@@ -90,7 +120,7 @@
                         </div>
                         <div class="mt-auto">
                             {% for link in project.links.all %}
-                            <a href="{{ link.url }}" class="btn btn-outline-light me-2" target="_blank" title="{{ link.url|get_link_name }}">
+                            <a href="{{ link.url }}" class="btn btn-outline-secondary me-2" target="_blank" title="{{ link.url|get_link_name }}">
                                 <i class="{{ link.url|get_icon_class }} me-2"></i>{{ link.url|get_link_name }}
                             </a>
                             {% endfor %}
@@ -98,12 +128,48 @@
                     </div>
                 </div>
             </div>
-            {% empty %}
-                <div class="col text-center">
-                    <p>등록된 프로젝트가 없습니다.</p>
-                </div>
             {% endfor %}
         </div>
+        {% endif %}
+
+        {% if completed_projects %}
+        <div class="row">
+            {% if ongoing_projects %}<div class="col-lg-12"><h4 class="mb-4 text-muted">완료</h4></div>{% endif %}
+            {% for project in completed_projects %}
+            <div class="col-lg-6 mb-4">
+                <div class="card project-card h-100 p-3">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title h4">{{ project.title }}</h5>
+                        <p class="card-text text-muted mb-2">
+                            {{ project.start_date|date:"Y.m" }} ~ {{ project.end_date|date:"Y.m" }}
+                        </p>
+                        <p class="card-text text-muted">{{ project.description }}</p>
+                        <div class="my-3">
+                            {% for skill in project.skills.all %}
+                                <span class="badge rounded-pill text-bg-secondary me-1">{{ skill.name }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="mt-auto">
+                            {% for link in project.links.all %}
+                            <a href="{{ link.url }}" class="btn btn-outline-secondary me-2" target="_blank" title="{{ link.url|get_link_name }}">
+                                <i class="{{ link.url|get_icon_class }} me-2"></i>{{ link.url|get_link_name }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        {% if not ongoing_projects and not completed_projects %}
+        <div class="row">
+            <div class="col text-center">
+                <p>등록된 프로젝트가 없습니다.</p>
+            </div>
+        </div>
+        {% endif %}
     </section>
 
     <!-- Certifications Section -->
@@ -114,28 +180,22 @@
             </div>
         </div>
         <div class="row">
-            {% for cert in certifications %}
-            <div class="col-md-6 col-lg-4 mb-4">
+             {% for cert in certifications %}
+             <div class="col-lg-6 mb-4">
                 <div class="card project-card h-100 p-3">
-                    <div class="card-body">
+                     <div class="card-body">
                         <h5 class="card-title h5">{{ cert.name }}</h5>
-                        <p class="card-text text-white-50">{{ cert.issuer }}</p>
-                        <p class="card-text"><small>{{ cert.date_acquired|date:"Y.m.d" }}</small></p>
-                    </div>
+                        <p class="card-text text-muted">{{ cert.issuer }}</p>
+                         <p class="card-text"><small>{{ cert.date_acquired|date:"Y.m.d" }}</small></p>
+                     </div>
                 </div>
-            </div>
-            {% empty %}
-                <div class="col text-center">
-                    <p>등록된 자격증/수상 내역이 없습니다.</p>
-                </div>
-            {% endfor %}
+             </div>
+             {% empty %}
+             <div class="col text-center">
+                <p>등록된 자격증/수상 내역이 없습니다.</p>
+             </div>
+             {% endfor %}
         </div>
     </section>
 </div>
-
-<footer class="py-4 text-center text-white-50">
-    <div class="container">
-        <p class="mb-0">&copy; {% now "Y" %} {% if profile %}{{ profile.name }}{% endif %}. All rights reserved.</p>
-    </div>
-</footer>
 {% endblock %}

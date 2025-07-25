@@ -9,8 +9,9 @@ class LinkInline(GenericTabularInline):
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('name', 'title', 'email')
+    """프로필 모델 어드민"""
     inlines = [LinkInline]
+    list_display = ('name', 'title')
 
 @admin.register(Skill)
 class SkillAdmin(admin.ModelAdmin):

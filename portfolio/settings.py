@@ -33,13 +33,17 @@ environ.Env.read_env(BASE_DIR / '.env')
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*'] # 나중에 실제 도메인으로 변경하세요.
 
 # Custom settings from .env
 ADMIN_URL = env('ADMIN_URL', default='admin/')
 ALLOWED_ADMIN_IPS = env.list('ALLOWED_ADMIN_IPS', default=['127.0.0.1', '::1'])
+
+# --- Start Debug Print ---
+print(f"DEBUG: Loaded ADMIN_URL = '{ADMIN_URL}'")
+# --- End Debug Print ---
 
 
 # Application definition
@@ -56,6 +60,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -131,6 +136,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
