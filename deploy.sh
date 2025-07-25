@@ -144,7 +144,7 @@ server {
     location = /favicon.ico { access_log off; log_not_found off; }
 
     location /static/ {
-        root $PROJECT_PATH;
+        alias $PROJECT_PATH/staticfiles/;
     }
 
     location / {
