@@ -11,7 +11,7 @@
             {% if profile %}
                 <h1 class="fw-bold mb-4">{{ profile.name }}</h1>
                 <h2 class="h3 mb-5 text-muted">{{ profile.title }}</h2>
-                <p class="lead">{{ profile.description }}</p>
+                <p class="lead">{{ profile.description|linebreaksbr }}</p>
             {% else %}
                 <h1 class="display-3 fw-bold mb-4">프로필을 등록해주세요</h1>
                 <p class="lead mb-5">관리자 페이지에서 프로필 정보를 추가할 수 있습니다.</p>
