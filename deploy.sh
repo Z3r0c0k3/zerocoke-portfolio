@@ -45,6 +45,9 @@ echo
 prompt "Enter the email for the Django admin superuser: "
 read SUPERUSER_EMAIL
 
+prompt "Enter the internal IP to allow for admin access (e.g., 192.168.1.100). Leave blank to skip Nginx-level restriction: "
+read ADMIN_ALLOWED_IP
+
 # --- Step 2: System Update and Package Installation ---
 info "Updating system packages and installing dependencies..."
 sudo apt-get update
@@ -76,7 +79,7 @@ cat << EOF > .env
 # Production Environment Variables
 SECRET_KEY='$NEW_SECRET_KEY'
 DEBUG=False
-ADMIN_URL='$ADMIN_URL/'
+ADMIN_URL=${ADMIN_URL}/
 ALLOWED_ADMIN_IPS='127.0.0.1,::1' # Add your public IP here if needed
 SUPERUSER_USERNAME='$SUPERUSER_USERNAME'
 SUPERUSER_EMAIL='$SUPERUSER_EMAIL'
@@ -136,6 +139,21 @@ success "Gunicorn service configured."
 # --- Step 7: Configure Nginx Reverse Proxy ---
 info "Configuring Nginx as a reverse proxy..."
 
+# Prepare the optional admin location block
+ADMIN_LOCATION_BLOCK=""
+if [ -n "$ADMIN_ALLOWED_IP" ]; then
+    info "Admin access will be restricted to IP: $ADMIN_ALLOWED_IP at the Nginx level."
+    ADMIN_LOCATION_BLOCK="
+    location /${ADMIN_URL}/ {
+        allow $ADMIN_ALLOWED_IP;
+        allow 127.0.0.1; # Allow localhost
+        deny all;
+
+        include proxy_params;
+        proxy_pass http://unix:/run/gunicorn.sock;
+    }"
+fi
+
 sudo bash -c "cat << EOF > /etc/nginx/sites-available/$PROJECT_DIR_NAME
 server {
     listen 80;
@@ -146,6 +164,8 @@ server {
     location /static/ {
         alias $PROJECT_PATH/staticfiles/;
     }
+
+    $ADMIN_LOCATION_BLOCK
 
     location / {
         include proxy_params;

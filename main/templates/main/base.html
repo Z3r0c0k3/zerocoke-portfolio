@@ -76,16 +76,19 @@
             z-index: 1;
         }
 
+        /* --- Hero Section --- */
         .hero-section {
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+            padding: 4rem 0;
         }
-
         .hero-section h1 {
-            /* Fluid typography: min, preferred, max */
-            font-size: clamp(2rem, 8vw, 3.5rem); 
+            /* min, preferred, max */
+            font-size: clamp(1.8rem, 6vw, 3.5rem); /* 모바일에 맞게 글자 크기 조정 */
+            word-break: keep-all; /* 이름이 중간에 잘리지 않도록 설정 */
         }
 
         .project-card {
@@ -109,6 +112,7 @@
             color: var(--badge-text-color) !important;
         }
 
+        /* --- Bottom Navigation Bar --- */
         .bottom-nav {
             position: fixed;
             bottom: 2rem;
@@ -120,47 +124,78 @@
             padding: 0.5rem 1.5rem;
             display: flex;
             gap: 1rem;
-            z-index: 1000;
+            z-index: 1030;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease;
         }
-
         .nav-item {
             display: flex;
             align-items: center;
         }
-
         .nav-item a, .nav-item .theme-toggle {
             color: var(--text-color);
             font-size: 1.25rem;
             padding: 0.5rem;
-            transition: color 0.3s ease, transform 0.3s ease;
+            transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
             background: none;
             border: none;
             cursor: pointer;
+            display: inline-block;
+            transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
+            -webkit-tap-highlight-color: transparent; /* 모바일 클릭 시 파란 배경 제거 */
         }
-
         .nav-item a:hover, .nav-item .theme-toggle:hover {
             color: var(--gradient-color-1);
             transform: scale(1.25);
         }
-
         .nav-separator {
             width: 1px;
             background-color: rgba(255, 255, 255, 0.2);
             height: 20px;
             align-self: center;
+            height: 22px; /* PC에서 구분선 높이 고정 */
+            border-left: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        [data-bs-theme="light"] .nav-separator {
+            border-left-color: rgba(0, 0, 0, 0.3);
         }
 
         /* Responsive adjustments for mobile */
         @media (max-width: 768px) {
-            .bottom-nav {
-                padding: 0.5rem 1rem;
-                gap: 0.5rem;
+            html {
+                /* 모바일 기본 글자 크기를 14px (기본 16px의 87.5%)로 줄입니다. */
+                /* rem 단위를 사용하는 모든 요소의 크기가 이에 비례하여 전반적으로 작아집니다. */
+                font-size: 87.5%;
             }
-
+            .hero-section {
+                padding: 2rem 0;
+            }
+            .hero-section h2 {
+                font-size: 1.1rem; /* 모바일에서 직책/소개 글자 크기 조정 */
+                margin-bottom: 2rem !important; /* 부트스트랩 mb-5 오버라이드 */
+            }
+            .hero-section .lead {
+                font-size: 0.9rem; /* 모바일에서 설명 글자 크기 조정 */
+            }
+            .bottom-nav {
+                padding: 0.5rem; /* 내부 여백 축소 */
+                gap: 0.2rem; /* 아이콘 간 간격 미세 조정 */
+                justify-content: flex-start; /* 아이콘을 왼쪽부터 정렬 */
+                overflow-x: auto; /* 공간이 부족하면 가로 스크롤 허용 */
+                -ms-overflow-style: none;  /* 스크롤바 숨기기 (IE, Edge) */
+                scrollbar-width: none;  /* 스크롤바 숨기기 (Firefox) */
+            }
+            /* 스크롤바 숨기기 (Chrome, Safari) */
+            .bottom-nav::-webkit-scrollbar {
+                display: none;
+            }
             .nav-item a, .nav-item .theme-toggle {
-                font-size: 1.1rem;
-                padding: 0.4rem;
+                font-size: 1.0rem; /* 아이콘 크기 미세 조정 */
+                padding: 0.35rem; /* 아이콘 여백 미세 조정 */
+            }
+            .nav-separator {
+                margin: 0 0.25rem; /* 구분선 여백 축소 */
+                height: 18px; /* 모바일에서 구분선 높이 고정 */
             }
         }
     </style>
