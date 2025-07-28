@@ -10,12 +10,12 @@ def home(request):
     skills = Skill.objects.all().order_by('name')
     
     # Projects
-    ongoing_projects = Project.objects.filter(end_date__isnull=True).order_by('start_date')
-    completed_projects = Project.objects.filter(end_date__isnull=False).order_by('start_date')
+    ongoing_projects = Project.objects.filter(end_date__isnull=True).order_by('-start_date')
+    completed_projects = Project.objects.filter(end_date__isnull=False).order_by('-start_date')
 
     # Educations
-    ongoing_educations = Education.objects.filter(end_date__isnull=True).order_by('start_date')
-    completed_educations = Education.objects.filter(end_date__isnull=False).order_by('start_date')
+    ongoing_educations = Education.objects.filter(end_date__isnull=True).order_by('-start_date')
+    completed_educations = Education.objects.filter(end_date__isnull=False).order_by('-start_date')
     
     # Certifications
     certificates = Certification.objects.filter(category='certificate').order_by('-date_acquired')
