@@ -180,21 +180,47 @@
             </div>
         </div>
         <div class="row">
-             {% for cert in certifications %}
-             <div class="col-lg-6 mb-4">
-                <div class="card project-card h-100 p-3">
-                     <div class="card-body">
-                        <h5 class="card-title h5">{{ cert.name }}</h5>
-                        <p class="card-text text-muted">{{ cert.issuer }}</p>
-                         <p class="card-text"><small>{{ cert.date_acquired|date:"Y.m.d" }}</small></p>
-                     </div>
+            {% for cert in certificates %}
+            <div class="col-lg-6 mb-4">
+               <div class="card project-card h-100 p-3">
+                    <div class="card-body">
+                       <h5 class="card-title h5">{{ cert.name }}</h5>
+                       <p class="card-text text-muted">{{ cert.issuer }}</p>
+                        <p class="card-text"><small>{{ cert.date_acquired|date:"Y.m.d" }}</small></p>
+                    </div>
                 </div>
-             </div>
-             {% empty %}
-             <div class="col text-center">
-                <p>등록된 자격증/수상 내역이 없습니다.</p>
-             </div>
-             {% endfor %}
+            </div>
+            {% empty %}
+            <div class="col text-center">
+               <p>등록된 자격증이 없습니다.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Awards Section -->
+    <section id="awards" class="mt-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="display-5 fw-bold mb-5">Awards</h2>
+            </div>
+        </div>
+        <div class="row">
+            {% for award in awards %}
+            <div class="col-lg-6 mb-4">
+               <div class="card project-card h-100 p-3">
+                    <div class="card-body">
+                       <h5 class="card-title h5">{{ award.name }}</h5>
+                       <p class="card-text text-muted">{{ award.issuer }}</p>
+                        <p class="card-text"><small>{{ award.date_acquired|date:"Y.m.d" }}</small></p>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col text-center">
+               <p>등록된 수상 내역이 없습니다.</p>
+            </div>
+            {% endfor %}
         </div>
     </section>
 </div>

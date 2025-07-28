@@ -7,17 +7,19 @@ from django.db.models import Q
 def home(request):
     """포트폴리오 홈페이지 뷰"""
     profile = Profile.objects.first()
-    skills = Skill.objects.all()
+    skills = Skill.objects.all().order_by('name')
     
     # Projects
-    ongoing_projects = Project.objects.filter(end_date__isnull=True).order_by('-start_date')
-    completed_projects = Project.objects.filter(end_date__isnull=False).order_by('-end_date', '-start_date')
+    ongoing_projects = Project.objects.filter(end_date__isnull=True).order_by('start_date')
+    completed_projects = Project.objects.filter(end_date__isnull=False).order_by('start_date')
 
     # Educations
-    ongoing_educations = Education.objects.filter(end_date__isnull=True).order_by('-start_date')
-    completed_educations = Education.objects.filter(end_date__isnull=False).order_by('-end_date', '-start_date')
+    ongoing_educations = Education.objects.filter(end_date__isnull=True).order_by('start_date')
+    completed_educations = Education.objects.filter(end_date__isnull=False).order_by('start_date')
     
-    certifications = Certification.objects.all().order_by('-date_acquired')
+    # Certifications
+    certificates = Certification.objects.filter(category='certificate').order_by('-date_acquired')
+    awards = Certification.objects.filter(category='award').order_by('-date_acquired')
 
     context = {
         'profile': profile,
@@ -26,7 +28,8 @@ def home(request):
         'completed_projects': completed_projects,
         'ongoing_educations': ongoing_educations,
         'completed_educations': completed_educations,
-        'certifications': certifications,
+        'certificates': certificates,
+        'awards': awards,
     }
     return render(request, 'main/home.html', context)
 

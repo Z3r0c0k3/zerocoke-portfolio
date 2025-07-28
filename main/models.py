@@ -50,9 +50,14 @@ class Project(models.Model):
 
 class Certification(models.Model):
     """자격증 및 수상 내역 모델"""
+    CATEGORY_CHOICES = [
+        ('certificate', '자격증'),
+        ('award', '수상'),
+    ]
     name = models.CharField(max_length=200)
     issuer = models.CharField(max_length=200, verbose_name="발급 기관")
     date_acquired = models.DateField(verbose_name="취득일")
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='certificate', verbose_name="분류")
 
     class Meta:
         ordering = ['-date_acquired']

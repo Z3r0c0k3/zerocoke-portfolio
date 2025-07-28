@@ -25,7 +25,8 @@ class ProjectAdmin(admin.ModelAdmin):
 
 @admin.register(Certification)
 class CertificationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'issuer', 'date_acquired')
+    list_display = ('name', 'issuer', 'date_acquired', 'category')
+    list_filter = ('category',)
 
 @admin.register(Education)
 class EducationAdmin(admin.ModelAdmin):
